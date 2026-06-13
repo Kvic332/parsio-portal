@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PARSIO — Credit Intelligence</title>
+  <meta name="description" content="PARSIO reads any Nigerian bank statement, in any format, and delivers a verified credit decision in seconds. The intelligence behind every loan." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:        #0b1f17;
+      --ink-soft:   #33493f;
+      --muted:      #5d7268;
+      --faint:      #8aa094;
+      --bg:         #fafdfb;
+      --surface:    #ffffff;
+      --tint:       #eef7f2;
+      --tint2:      #e2f1e9;
+      --border:     #dcebe3;
+      --accent:     #0e9f6e;
+      --accent-dk:  #0a7d57;
+      --accent-ink: #064e36;
+      --gold:       #d97706;
+      --red:        #dc2626;
+      --shadow-sm:  0 1px 3px rgba(11,31,23,.06), 0 1px 2px rgba(11,31,23,.04);
+      --shadow-md:  0 10px 30px -8px rgba(11,31,23,.12);
+      --shadow-lg:  0 24px 60px -16px rgba(11,31,23,.18);
+      --radius:     14px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, .display { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 48px;
+      background: rgba(250,253,251,.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: .5px;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-ink) 100%);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .logo-mark svg { width: 18px; height: 18px; }
+
+    .nav-logo em { font-style: normal; color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink-soft);
+      text-decoration: none;
+      transition: color .2s;
+    }
+
+    .nav-links a:hover { color: var(--accent-dk); }
+
+    .nav-actions { display: flex; align-items: center; gap: 12px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 11px 24px;
+      border-radius: 10px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: transform .15s, box-shadow .2s, background .2s, color .2s, border-color .2s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(14,159,110,.32);
+    }
+
+    .btn-primary:hover { background: var(--accent-dk); transform: translateY(-1px); box-shadow: 0 8px 22px rgba(14,159,110,.38); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent-dk); }
+
+    .btn-lg { padding: 15px 32px; font-size: 15px; border-radius: 12px; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      padding: 160px 48px 90px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -200px; right: -300px;
+      width: 720px; height: 720px;
+      background: radial-gradient(circle, rgba(14,159,110,.10) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-dk);
+      background: var(--tint);
+      border: 1px solid var(--tint2);
+      padding: 7px 16px;
+      border-radius: 999px;
+      margin-bottom: 24px;
+    }
+
+    .hero-badge .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(14,159,110,.45); }
+      55%      { box-shadow: 0 0 0 7px rgba(14,159,110,0); }
+    }
+
+    .hero h1 {
+      font-size: clamp(40px, 5vw, 60px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -1.5px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+      position: relative;
+    }
+
+    .hero h1 em::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 4px;
+      height: 10px;
+      background: rgba(14,159,110,.16);
+      border-radius: 3px;
+      z-index: -1;
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 480px;
+      margin-bottom: 36px;
+      line-height: 1.75;
+    }
+
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 44px; }
+
+    .hero-proof {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .proof-item .proof-value {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1.1;
+    }
+
+    .proof-item .proof-value span { color: var(--accent); }
+
+    .proof-item .proof-label {
+      font-size: 12.5px;
+      color: var(--faint);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    /* ── HERO CARD ── */
+    .hero-visual { position: relative; }
+
+    .analysis-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow-lg);
+      padding: 28px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .ac-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 6px;
+    }
+
+    .ac-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 15px; }
+    .ac-title small { display: block; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 12px; color: var(--faint); margin-top: 2px; }
+
+    .ac-status {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--accent-dk);
+      background: var(--tint);
+      padding: 6px 14px;
+      border-radius: 999px;
+    }
+
+    .ac-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 13px 0;
+      border-bottom: 1px solid #eef5f1;
+      font-size: 13.5px;
+    }
+
+    .ac-row:last-of-type { border-bottom: none; }
+
+    .ac-label { color: var(--muted); font-weight: 500; }
+    .ac-val { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .ac-green { color: var(--accent-dk); }
+    .ac-gold  { color: var(--gold); }
+    .ac-red   { color: var(--red); }
+
+    .ac-verdict {
+      margin-top: 18px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dk) 100%);
+      color: #fff;
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ac-verdict .v-label { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; opacity: .85; }
+    .ac-verdict .v-value { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 21px; font-weight: 800; }
+    .ac-verdict .v-badge {
+      background: rgba(255,255,255,.18);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 8px;
+    }
+
+    .float-chip {
+      position: absolute;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+      padding: 12px 18px;
+      font-size: 12.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 3;
+      animation: floaty 5s ease-in-out infinite;
+    }
+
+    .float-chip.chip-1 { top: -22px; right: -16px; animation-delay: 0s; }
+    .float-chip.chip-2 { bottom: -20px; left: -24px; animation-delay: 1.6s; }
+
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+
+    .chip-icon {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .chip-1 .chip-icon { background: var(--tint); }
+    .chip-2 .chip-icon { background: #fef3e2; }
+
+    /* ── TICKER ── */
+    .ticker-section {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      padding: 22px 0;
+      overflow: hidden;
+    }
+
+    .ticker-label {
+      text-align: center;
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin-bottom: 18px;
+    }
+
+    .ticker {
+      display: flex;
+      gap: 44px;
+      width: max-content;
+      animation: ticker 30s linear infinite;
+    }
+
+    .ticker-item {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink-soft);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: .75;
+    }
+
+    .ticker-item::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: .6;
+    }
+
+    @keyframes ticker {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ── SECTIONS ── */
+    section { padding: 110px 48px; max-width: 1200px; margin: 0 auto; }
+
+    .sec-eyebrow {
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--accent-dk);
+      margin-bottom: 14px;
+    }
+
+    .sec-title {
+      font-size: clamp(30px, 3.6vw, 44px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.12;
+      margin-bottom: 18px;
+      max-width: 620px;
+    }
+
+    .sec-sub { font-size: 16px; color: var(--muted); max-width: 540px; line-height: 1.75; }
+
+    /* ── STEPS ── */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 64px;
+    }
+
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 30px;
+      position: relative;
+      transition: transform .2s, box-shadow .25s, border-color .2s;
+    }
+
+    .step:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--tint2);
+    }
+
+    .step-num {
+      position: absolute;
+      top: 28px; right: 28px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--tint2);
+      line-height: 1;
+    }
+
+    .step-icon {
+      width: 52px; height: 52px;
+      border-radius: 13px;
+      background: var(--tint);
+      display: grid;
+      place-items: center;
+      font-size: 23px;
+      margin-bottom: 22px;
+    }
+
+    .step h3 { font-size: 19px; font-weight: 700; margin-bottom: 10px; }
+    .step p  { font-size: 14px; color: var(--muted); line-height: 1.75; }
+
+    /* ── CAPABILITIES ── */
+    .caps-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); max-width: none; }
+    .caps-inner { max-width: 1200px; margin: 0 auto; }
+
+    .caps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      margin-top: 60px;
+    }
+
+    .cap {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px 28px;
+      transition: transform .2s, box-shadow .25s;
+    }
+
+    .cap:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+
+    .cap-icon {
+      width: 44px; height: 44px;
+      border-radius: 11px;
+      background: var(--tint);
+      display: grid;
+      place-items: center;
+      font-size: 19px;
+      margin-bottom: 18px;
+    }
+
+    .cap h3 { font-size: 16.5px; font-weight: 700; margin-bottom: 8px; }
+    .cap p  { font-size: 13.5px; color: var(--muted); line-height: 1.7; }
+
+    /* ── STATS BAND ── */
+    .stats-band {
+      background: linear-gradient(135deg, var(--accent-ink) 0%, #0a3a29 55%, var(--accent-dk) 130%);
+      border-radius: 24px;
+      padding: 64px 56px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 36px;
+      color: #fff;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .stat-value {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat-label { font-size: 13.5px; opacity: .75; font-weight: 500; }
+
+    /* ── CTA ── */
+    .cta-section { text-align: center; }
+    .cta-section .sec-title, .cta-section .sec-sub { margin-left: auto; margin-right: auto; }
+    .cta-actions { display: flex; gap: 14px; justify-content: center; margin-top: 40px; flex-wrap: wrap; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .footer-brand .logo-mark { width: 26px; height: 26px; border-radius: 7px; }
+    .footer-brand .logo-mark svg { width: 13px; height: 13px; }
+    .footer-brand em { font-style: normal; color: var(--accent); }
+
+    .footer-copy { font-size: 13px; color: var(--faint); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 960px) {
+      nav { padding: 14px 24px; }
+      .nav-links { display: none; }
+      .hero { grid-template-columns: 1fr; padding: 130px 24px 70px; gap: 56px; }
+      section { padding: 80px 24px; }
+      .steps, .caps-grid { grid-template-columns: 1fr; }
+      .stats-band { grid-template-columns: repeat(2, 1fr); padding: 48px 36px; }
+      .float-chip.chip-1 { right: 0; }
+      .float-chip.chip-2 { left: 0; }
+      footer { padding: 32px 24px; flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+  <base target="_top" />
+  <script>
+    // If loaded inside a frame (e.g. the Streamlit hosting iframe after a
+    // redirect), break out to the top-level window.
+    try {
+      if (window.top !== window.self) {
+        window.top.location.href = window.location.href;
+      }
+    } catch (err) { /* links still escape via <base target="_top"> */ }
+  </script>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <span class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 16L10 10L14 13L20 5" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="20" cy="5" r="2" fill="#fff"/>
+        </svg>
+      </span>
+      PARS<em>IO</em>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#capabilities">Capabilities</a></li>
+      <li><a href="#banks">Coverage</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="login.html" class="btn btn-ghost">Sign in</a>
+      <a href="login.html" class="btn btn-primary">Launch App</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div>
+      <div class="hero-badge"><span class="dot"></span> Credit Intelligence Engine</div>
+      <h1>Every statement tells a truth. <em>PARSIO</em> reads it.</h1>
+      <p class="hero-sub">
+        Drop any Nigerian bank statement — any bank, any format, any layout.
+        PARSIO parses the raw data, verifies it to the last kobo, and delivers
+        a complete credit decision in seconds.
+      </p>
+      <div class="hero-actions">
+        <a href="login.html" class="btn btn-primary btn-lg">Analyse a statement</a>
+        <a href="#how" class="btn btn-ghost btn-lg">See how it works</a>
+      </div>
+      <div class="hero-proof">
+        <div class="proof-item">
+          <div class="proof-value">30<span>+</span></div>
+          <div class="proof-label">Banks supported</div>
+        </div>
+        <div class="proof-item">
+          <div class="proof-value">100<span>%</span></div>
+          <div class="proof-label">Verified to the kobo</div>
+        </div>
+        <div class="proof-item">
+          <div class="proof-value">&lt;5<span>s</span></div>
+          <div class="proof-label">Decision time</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="float-chip chip-1">
+        <span class="chip-icon">✓</span>
+        Extraction verified — 100% match
+      </div>
+      <div class="analysis-card">
+        <div class="ac-head">
+          <div class="ac-title">Statement Analysis<small>Bank_Statement_CLIENT.pdf</small></div>
+          <div class="ac-status">● Complete</div>
+        </div>
+        <div class="ac-row"><span class="ac-label">Bank detected</span><span class="ac-val ac-green">Fidelity Bank ✓</span></div>
+        <div class="ac-row"><span class="ac-label">Statement period</span><span class="ac-val">Feb — May 2026</span></div>
+        <div class="ac-row"><span class="ac-label">Total inflow</span><span class="ac-val ac-green">₦54,802,336</span></div>
+        <div class="ac-row"><span class="ac-label">Self-transfers excluded</span><span class="ac-val ac-gold">−₦15,403,520</span></div>
+        <div class="ac-row"><span class="ac-label">Loan disbursals excluded</span><span class="ac-val ac-red">−₦813,441</span></div>
+        <div class="ac-row"><span class="ac-label">Eligible monthly income</span><span class="ac-val">₦6,396,061</span></div>
+        <div class="ac-verdict">
+          <div>
+            <div class="v-label">Maximum Loan</div>
+            <div class="v-value">₦3,800,000</div>
+          </div>
+          <div class="v-badge">APPROVED</div>
+        </div>
+      </div>
+      <div class="float-chip chip-2">
+        <span class="chip-icon">🛡</span>
+        0 blacklist matches found
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker-section" id="banks">
+    <div class="ticker-label">Reads statements from 30+ Nigerian banks</div>
+    <div class="ticker">
+      <span class="ticker-item">Fidelity Bank</span>
+      <span class="ticker-item">Zenith Bank</span>
+      <span class="ticker-item">GTBank</span>
+      <span class="ticker-item">Access Bank</span>
+      <span class="ticker-item">Moniepoint</span>
+      <span class="ticker-item">Jaiz Bank</span>
+      <span class="ticker-item">OPay</span>
+      <span class="ticker-item">UBA</span>
+      <span class="ticker-item">First Bank</span>
+      <span class="ticker-item">Stanbic IBTC</span>
+      <span class="ticker-item">Sterling Bank</span>
+      <span class="ticker-item">Wema Bank</span>
+      <span class="ticker-item">Kuda</span>
+      <span class="ticker-item">PalmPay</span>
+      <span class="ticker-item">Carbon</span>
+      <span class="ticker-item">FairMoney</span>
+      <span class="ticker-item">Renmoney</span>
+      <span class="ticker-item">Providus Bank</span>
+      <span class="ticker-item">Lotus Bank</span>
+      <span class="ticker-item">Union Bank</span>
+      <span class="ticker-item">FCMB</span>
+      <span class="ticker-item">Ecobank</span>
+      <span class="ticker-item">Parallex Bank</span>
+      <!-- duplicate for seamless loop -->
+      <span class="ticker-item">Fidelity Bank</span>
+      <span class="ticker-item">Zenith Bank</span>
+      <span class="ticker-item">GTBank</span>
+      <span class="ticker-item">Access Bank</span>
+      <span class="ticker-item">Moniepoint</span>
+      <span class="ticker-item">Jaiz Bank</span>
+      <span class="ticker-item">OPay</span>
+      <span class="ticker-item">UBA</span>
+      <span class="ticker-item">First Bank</span>
+      <span class="ticker-item">Stanbic IBTC</span>
+      <span class="ticker-item">Sterling Bank</span>
+      <span class="ticker-item">Wema Bank</span>
+      <span class="ticker-item">Kuda</span>
+      <span class="ticker-item">PalmPay</span>
+      <span class="ticker-item">Carbon</span>
+      <span class="ticker-item">FairMoney</span>
+      <span class="ticker-item">Renmoney</span>
+      <span class="ticker-item">Providus Bank</span>
+      <span class="ticker-item">Lotus Bank</span>
+      <span class="ticker-item">Union Bank</span>
+      <span class="ticker-item">FCMB</span>
+      <span class="ticker-item">Ecobank</span>
+      <span class="ticker-item">Parallex Bank</span>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="sec-eyebrow">How it works</div>
+    <h2 class="sec-title">Three steps. One verdict.</h2>
+    <p class="sec-sub">No spreadsheets. No manual calculations. No guessing. PARSIO does the heavy lifting — you make the call.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-icon">📄</div>
+        <h3>Upload the statement</h3>
+        <p>PDF or Excel. Encrypted or plain. PARSIO detects the bank, the layout, and the format automatically — no template setup required.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-icon">⚡</div>
+        <h3>PARSIO reads it</h3>
+        <p>Every transaction is extracted, classified, and verified. Credits, debits, self-transfers, reversals, recycled income — all handled with precision.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-icon">✦</div>
+        <h3>Receive the decision</h3>
+        <p>Turnover, DTI, maximum loan, repayment schedule, interest rate — a complete credit picture with a clear approved or declined verdict.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAPABILITIES -->
+  <div class="caps-section">
+    <section class="caps-inner" id="capabilities" style="padding-left:0;padding-right:0">
+      <div class="sec-eyebrow">Capabilities</div>
+      <h2 class="sec-title">Built for the precision this work demands.</h2>
+      <p class="sec-sub">Every feature exists because a real loan officer needed it. Nothing is added for show.</p>
+
+      <div class="caps-grid">
+        <div class="cap">
+          <div class="cap-icon">🏦</div>
+          <h3>Any bank, any format</h3>
+          <p>Fidelity, Zenith, GTBank, Moniepoint, OPay, Jaiz and more. Bank and layout detected automatically, with extracted totals verified against the statement's own figures.</p>
+        </div>
+        <div class="cap">
+          <div class="cap-icon">🛡</div>
+          <h3>Fraud &amp; recycling detection</h3>
+          <p>Round-tripped funds, self-deposits, and recycled income are isolated and excluded. Blacklisted counterparties are flagged before money moves.</p>
+        </div>
+        <div class="cap">
+          <div class="cap-icon">🔍</div>
+          <h3>Smart credit classification</h3>
+          <p>Loan disbursals, reversals, non-business income, and savings round-trips are separated from genuine business turnover — automatically.</p>
+        </div>
+        <div class="cap">
+          <div class="cap-icon">📊</div>
+          <h3>Debit intelligence</h3>
+          <p>Existing loan repayments, rent, utilities, and bank charges surfaced for officer visibility — the obligations that shape repayment capacity.</p>
+        </div>
+        <div class="cap">
+          <div class="cap-icon">🧮</div>
+          <h3>Full loan computation</h3>
+          <p>Eligible income, DTI, maximum principal, tenor, interest, and a complete repayment schedule — generated in one pass.</p>
+        </div>
+        <div class="cap">
+          <div class="cap-icon">📋</div>
+          <h3>Audit-ready reports</h3>
+          <p>Every figure traces back to the underlying transactions. Export a complete analysis your credit committee can stand behind.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- STATS -->
+  <section>
+    <div class="stats-band">
+      <div><div class="stat-value">30+</div><div class="stat-label">Bank formats supported</div></div>
+      <div><div class="stat-value">100%</div><div class="stat-label">Kobo-level verification</div></div>
+      <div><div class="stat-value">&lt;5s</div><div class="stat-label">Statement to decision</div></div>
+      <div><div class="stat-value">0</div><div class="stat-label">Manual data entry</div></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="sec-eyebrow">Get started</div>
+    <h2 class="sec-title">The next statement on your desk doesn't have to take an hour.</h2>
+    <p class="sec-sub">Upload it to PARSIO and have a verified credit decision before your coffee cools.</p>
+    <div class="cta-actions">
+      <a href="login.html" class="btn btn-primary btn-lg">Launch PARSIO</a>
+      <a href="login.html" class="btn btn-ghost btn-lg">Sign in</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">
+      <span class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 16L10 10L14 13L20 5" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="20" cy="5" r="2" fill="#fff"/>
+        </svg>
+      </span>
+      PARS<em>IO</em>
+    </div>
+    <div class="footer-copy">© 2026 PARSIO — The intelligence behind every loan.</div>
+  </footer>
+
+  <script>
+    // Forward the ?app= return-deployment param (e.g. from the dev branch
+    // app's gate) to every login link, so sign-in returns to the deployment
+    // the visitor came from. login.html validates the value.
+    (function () {
+      try {
+        var app = new URLSearchParams(window.location.search).get('app');
+        if (!app) return;
+        document.querySelectorAll('a[href^="login.html"]').forEach(function (a) {
+          a.href = 'login.html?app=' + encodeURIComponent(app);
+        });
+      } catch (err) { /* ignore — production default applies */ }
+    })();
+  </script>
+
+</body>
+</html>
