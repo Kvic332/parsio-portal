@@ -397,8 +397,19 @@
           </span>
         </div>
 
+        <label for="officer-email">Work Email</label>
+        <div class="field">
+          <input type="email" id="officer-email" name="officer-email" placeholder="e.g. adaobi@yourbank.com" autocomplete="email" required />
+          <span class="field-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="4" width="20" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M2 8l10 6 10-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </div>
+
         <div class="form-row">
-          <label class="remember"><input type="checkbox" /> Remember me</label>
+          <label class="remember"><input type="checkbox" id="remember-me" /> Remember me</label>
         </div>
 
         <button type="submit" class="btn-login">Log In</button>
@@ -465,13 +476,30 @@
     // so the app skips its own sign-in screen entirely.
     document.getElementById('login-form').addEventListener('submit', function (e) {
       e.preventDefault();
-      var name = document.getElementById('username').value.trim();
-      if (!name) return;
+      var name  = document.getElementById('username').value.trim();
+      var email = document.getElementById('officer-email').value.trim();
+      if (!name || !email) return;
       // Nigeria time (WAT = UTC+1, no DST) — must match the app's gate date.
       var signed = new Date(Date.now() + 3600000).toISOString().slice(0, 10);
+      // Persist email in localStorage if "Remember me" is checked
+      if (document.getElementById('remember-me').checked) {
+        try { localStorage.setItem('parsio_officer_email', email);
+              localStorage.setItem('parsio_officer_name', name); } catch(e) {}
+      }
       goTo(APP_URL + '?officer=' +
-        encodeURIComponent(name) + '&signed=' + signed);
+        encodeURIComponent(name) + '&email=' + encodeURIComponent(email) + '&signed=' + signed);
     });
+
+    // Pre-fill from localStorage if previously remembered
+    (function () {
+      try {
+        var savedEmail = localStorage.getItem('parsio_officer_email');
+        var savedName  = localStorage.getItem('parsio_officer_name');
+        if (savedEmail) document.getElementById('officer-email').value = savedEmail;
+        if (savedName)  document.getElementById('username').value = savedName;
+        if (savedEmail || savedName) document.getElementById('remember-me').checked = true;
+      } catch(e) {}
+    })();
 
     // Admin: ask for the key (never stored in this public page) and open
     // the dashboard pre-signed-in so the gate doesn't block the admin view.
