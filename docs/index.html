@@ -630,7 +630,9 @@
       <div class="hero-actions">
         <a href="login.html" class="btn btn-primary btn-lg">Analyse a statement</a>
         <a href="#how" class="btn btn-ghost btn-lg">See how it works</a>
+        <button id="installBtn" class="btn btn-ghost btn-lg" style="display:none">📲 Install app</button>
       </div>
+      <p id="installHint" style="display:none;font-size:13px;color:#0e9f6e;margin-top:10px;font-weight:600"></p>
       <div class="hero-proof">
         <div class="proof-item">
           <div class="proof-value">30<span>+</span></div>
@@ -880,13 +882,54 @@
     })();
   </script>
 
-  <!-- PWA: register service worker -->
+  <!-- PWA: register service worker + install button -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
         navigator.serviceWorker.register('sw.js').catch(function () {});
       });
     }
+
+    (function () {
+      var btn  = document.getElementById('installBtn');
+      var hint = document.getElementById('installHint');
+      if (!btn) return;
+      var deferred = null;
+
+      var ua = navigator.userAgent || '';
+      var isIOS = /iphone|ipad|ipod/i.test(ua);
+      var isStandalone = window.matchMedia('(display-mode: standalone)').matches
+                         || window.navigator.standalone === true;
+      function show() { btn.style.display = 'inline-flex'; }
+
+      // Chrome / Edge (Android + desktop): native install prompt.
+      window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault();
+        deferred = e;
+        show();
+      });
+      window.addEventListener('appinstalled', function () {
+        btn.style.display = 'none';
+        if (hint) { hint.textContent = '✓ Installed — find PARSIO on your home screen.'; hint.style.display = 'block'; }
+      });
+
+      btn.addEventListener('click', function () {
+        if (deferred) {
+          deferred.prompt();
+          deferred.userChoice.then(function () { deferred = null; btn.style.display = 'none'; });
+        } else if (isIOS) {
+          if (hint) { hint.textContent = 'On iPhone: tap the Share button, then “Add to Home Screen”.'; hint.style.display = 'block'; }
+        } else {
+          if (hint) { hint.textContent = 'In Chrome: tap the ⋮ menu, then “Add to Home screen / Install app”. (Other browsers may not support installing — open parsio.net in Chrome.)'; hint.style.display = 'block'; }
+        }
+      });
+
+      // Always offer the button on phones (covers iOS and Android browsers that
+      // don't fire beforeinstallprompt) unless it's already installed.
+      if (!isStandalone && (isIOS || /android/i.test(ua))) {
+        setTimeout(show, 1200);
+      }
+    })();
   </script>
 
   <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "891d98bd3a204c99868f10c3057da5f0"}'></script><!-- End Cloudflare Web Analytics -->
