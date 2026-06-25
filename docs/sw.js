@@ -1,0 +1,44 @@
+/* PARSIO portal service worker — enables installable PWA + offline shell.
+   Network-first for same-origin GETs (so the marketing pages stay fresh),
+   falling back to cache when offline. Cross-origin requests (e.g. the
+   Streamlit app on *.streamlit.app) are left untouched. */
+const CACHE = 'parsio-portal-v1';
+const SHELL = [
+  './',
+  './index.html',
+  './login.html',
+  './manifest.webmanifest',
+  './icon-192.png',
+  './icon-512.png',
+  './apple-touch-icon.png'
+];
+
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys()
+      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', (e) => {
+  const req = e.request;
+  if (req.method !== 'GET') return;
+  // Only handle same-origin requests; never intercept the app or fonts/CDN.
+  if (new URL(req.url).origin !== location.origin) return;
+  e.respondWith(
+    fetch(req)
+      .then((res) => {
+        const copy = res.clone();
+        caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
+        return res;
+      })
+      .catch(() => caches.match(req).then((m) => m || caches.match('./index.html')))
+  );
+});
